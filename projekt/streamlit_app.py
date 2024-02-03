@@ -10,10 +10,11 @@ import numpy as np
 import scipy.stats as stats
 import pickle
 
-
+# Load datasets
 original_df = pd.read_csv('clean_data.csv')
 train_df = pd.read_csv('train.csv')
 test_df = pd.read_csv('test.csv')
+# Set color for pyplot
 cds=['#9674E4', '#96D7F4']
 
 
@@ -42,11 +43,11 @@ def main():
             fig = px.histogram(original_df, x=selected_var, marginal='rug', hover_data=original_df.columns, color_discrete_sequence=cds)
             st.plotly_chart(fig)
             
-            # price vs variable
+            # Price vs variable
             fig = px.scatter(original_df, x=selected_var, y='price', trendline='ols', color_discrete_sequence=cds)
             st.plotly_chart(fig)
             
-            # plot with kde curve
+            # Plot with kde curve
             # hist_data = [original_df[selected_var]]
             # group_labels = ['distplot'] # name of the dataset
             #
@@ -66,10 +67,10 @@ def main():
         model_filename = f'models/model_{model_choice.split()[0].lower()}_{criterion_choice.lower()}.pkl'
         model = sm.load(model_filename)
         
-        # variables chosen for the regression model
+        # Variables chosen for the regression model
         st.write('Chosen Variables:', model.model.exog_names)
         
-        # model performance metrics
+        # Model performance metrics
         train_preds = model.predict(train_df)
         test_preds = model.predict(test_df)
         train_rmse = np.sqrt(mean_squared_error(train_df['price'], train_preds))
@@ -100,7 +101,7 @@ def main():
             fig.update_layout(title=f'Residuals vs {predictor}', xaxis_title=predictor, yaxis_title='Residuals')
             st.plotly_chart(fig)
         elif plot_choice == 'Actual vs Fitted':
-            # actual vs fitted on either train or test set
+            # Actual vs fitted on either train or test set
             set_choice = st.sidebar.selectbox('Set:', ['Train', 'Test'])
             if set_choice == 'Train':
                 fig = px.scatter(x=train_df['price'], y=fitted_vals, color_discrete_sequence=cds)
